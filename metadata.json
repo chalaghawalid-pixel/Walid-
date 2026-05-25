@@ -1,6 +1,6 @@
 {
   "name": "AuraShare",
-  "description": "High-speed, ad-free file sharing via Wi-Fi and hotspot featuring a gorgeous glassmorphism theme, APK sharing, smart cloud replication state, and complete bilingual support.",
+  "description": "High-speed Bluetooth file sharing featuring a gorgeous glassmorphism theme, real file picker access, and complete bilingual support.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
