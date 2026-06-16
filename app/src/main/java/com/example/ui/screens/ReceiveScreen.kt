@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Bluetooth
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Podcasts
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Wifi
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -70,7 +71,7 @@ fun ReceiveScreen(viewModel: MainViewModel) {
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Text(
-                        text = "Receiving File...",
+                        text = if (viewModel.isArabic.value) "جاري استقبال الملف..." else "Receiving File...",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -180,7 +181,7 @@ fun ReceiveScreen(viewModel: MainViewModel) {
             Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = "Listening for AuraShare Beams",
+                text = if (viewModel.isArabic.value) "يتم الآن الاستماع لبث أورا شير" else "Listening for AuraShare Beams",
                 style = MaterialTheme.typography.titleLarge,
                 color = Color.White,
                 fontWeight = FontWeight.Bold,
@@ -190,14 +191,14 @@ fun ReceiveScreen(viewModel: MainViewModel) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Ensure your Bluetooth is enabled so nearby senders can discover and scan your device.",
+                text = if (viewModel.isArabic.value) "تأكد من تفعيل البلوتوث لكي يتمكن المرسلون القريبون من اكتشاف جهازك وفحصه." else "Ensure your Bluetooth is enabled so nearby senders can discover and scan your device.",
                 fontSize = 14.sp,
                 color = Color.White.copy(alpha = 0.5f),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Real Discoverability Activation Button
             GlassButton(
@@ -211,7 +212,7 @@ fun ReceiveScreen(viewModel: MainViewModel) {
                         Toast.makeText(context, "Permission missing for discoverability", Toast.LENGTH_SHORT).show()
                     }
                 },
-                text = "Make Device Discoverable",
+                text = if (viewModel.isArabic.value) "اجعل الجهاز مرئياً" else "Make Device Discoverable",
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Share,
@@ -223,7 +224,77 @@ fun ReceiveScreen(viewModel: MainViewModel) {
                 gradientColors = listOf(AccentViolet, AccentPink)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Wi-Fi Hotspot sharing panel (تفعيل نقطة الاتصال)
+            GlassCard(
+                modifier = Modifier.fillMaxWidth(0.95f),
+                bgColor = Color.White.copy(alpha = 0.04f),
+                borderColor = AccentCyan.copy(alpha = 0.30f)
+            ) {
+                Column(
+                    modifier = Modifier.padding(14.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Wifi,
+                            contentDescription = translations.hotspotCardTitle,
+                            tint = AccentCyan,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = translations.hotspotCardTitle,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(6.dp))
+                    Text(
+                        text = translations.hotspotCardSub,
+                        fontSize = 11.sp,
+                        color = Color.White.copy(alpha = 0.65f),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    GlassButton(
+                        onClick = {
+                            val intent = Intent().apply {
+                                action = "android.settings.TETHER_SETTINGS"
+                            }
+                            try {
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                                val fallbackIntent = Intent().apply {
+                                    action = android.provider.Settings.ACTION_WIRELESS_SETTINGS
+                                }
+                                try {
+                                    context.startActivity(fallbackIntent)
+                                } catch (ex: Exception) {
+                                    Toast.makeText(context, "Cannot open hotspot settings.", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                        },
+                        text = translations.hotspotBtn,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Wifi,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        },
+                        gradientColors = listOf(AccentCyan, AccentViolet)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Instructions tips
             GlassCard(
@@ -242,7 +313,9 @@ fun ReceiveScreen(viewModel: MainViewModel) {
                     )
                     Spacer(modifier = Modifier.width(12.dp))
                     Text(
-                        text = "Both devices must be paired or have Bluetooth capability up and active to begin direct wireless transfer speed tests.",
+                        text = if (viewModel.isArabic.value)
+                            "تأكد من إبقاء الأجهزة قريبة ومفعلة لضمان أقصى سرعة ممكنة لنقل ومزامنة الملفات لاسلكياً."
+                            else "Both devices must be paired or have Bluetooth/Hotspot interface up to perform direct high speed wireless transfers.",
                         fontSize = 12.sp,
                         color = Color.White.copy(alpha = 0.62f)
                     )

@@ -49,7 +49,12 @@ object Localization {
 
         // General
         val completedLabel: String,
-        val failedLabel: String
+        val failedLabel: String,
+
+        // Hotspot
+        val hotspotCardTitle: String,
+        val hotspotCardSub: String,
+        val hotspotBtn: String
     )
 
     val English = Translation(
@@ -95,7 +100,11 @@ object Localization {
         cleanAllSuccess = "Logs wiped safely.",
         bytesUnit = "Bytes",
         completedLabel = "COMPLETED",
-        failedLabel = "FAILED"
+        failedLabel = "FAILED",
+
+        hotspotCardTitle = "Wi-Fi Hotspot Sharing",
+        hotspotCardSub = "Enable Hotspot to share files at hyper-fast Wi-Fi speeds together with Bluetooth discovery.",
+        hotspotBtn = "Open Hotspot Settings"
     )
 
     val Arabic = Translation(
@@ -141,6 +150,10 @@ object Localization {
         cleanAllSuccess = "تم مسح سجل العمليات وتطهير الذاكرة كلياً.",
         bytesUnit = "بايت",
         completedLabel = "مكتمل",
-        failedLabel = "فشل"
+        failedLabel = "فشل",
+
+        hotspotCardTitle = "مشاركة نقطة الاتصال (توتير)",
+        hotspotCardSub = "قم بتفعيل نقطة الاتصال لمشاركة الملفات بسرعة واي-فاي فائقة جنباً إلى جنب مع اكتشاف البلوتوث.",
+        hotspotBtn = "فتح إعدادات نقطة الاتصال"
     )
 }

@@ -92,6 +92,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _mediaDocs = MutableStateFlow<List<LocalFile>>(emptyList())
     val mediaDocs: StateFlow<List<LocalFile>> = _mediaDocs.asStateFlow()
 
+    private val _mediaApps = MutableStateFlow<List<LocalFile>>(emptyList())
+    val mediaApps: StateFlow<List<LocalFile>> = _mediaApps.asStateFlow()
+
     // Connection & Active transfer UI states
     val isTransferring = MutableStateFlow(false)
     val transferProgress = MutableStateFlow(0f)
@@ -142,6 +145,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     init {
         loadBondedDevices()
         startBluetoothListeningServer()
+        scanLocalMediaStore(application)
     }
 
     fun toggleLanguage() {
@@ -340,6 +344,57 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             _mediaPhotos.value = photos
             _mediaVideos.value = videos
             _mediaDocs.value = docs
+
+            // Query Installed Apps and itself (APK sharing)
+            val apps = mutableListOf<LocalFile>()
+            try {
+                val pm = context.packageManager
+                val selfPackageName = context.packageName
+                val installedApps = pm.getInstalledApplications(PackageManager.GET_META_DATA)
+                
+                // First, find ourselves so we put it at the very top of the list for easy access
+                val selfApp = installedApps.firstOrNull { it.packageName == selfPackageName }
+                if (selfApp != null) {
+                    val label = pm.getApplicationLabel(selfApp).toString()
+                    val apkFile = java.io.File(selfApp.publicSourceDir)
+                    if (apkFile.exists()) {
+                        apps.add(
+                            LocalFile(
+                                uriString = Uri.fromFile(apkFile).toString(),
+                                name = "$label (Self - إرسال التطبيق).apk",
+                                size = apkFile.length(),
+                                mimeType = "application/vnd.android.package-archive",
+                                category = "APP"
+                            )
+                        )
+                    }
+                }
+
+                // Add other user installed applications
+                for (app in installedApps) {
+                    if (app.packageName == selfPackageName) continue
+                    val isSystem = (app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
+                    if (!isSystem) {
+                        val label = pm.getApplicationLabel(app).toString()
+                        val apkFile = java.io.File(app.publicSourceDir)
+                        if (apkFile.exists()) {
+                            apps.add(
+                                LocalFile(
+                                    uriString = Uri.fromFile(apkFile).toString(),
+                                    name = "$label.apk",
+                                    size = apkFile.length(),
+                                    mimeType = "application/vnd.android.package-archive",
+                                    category = "APP"
+                                )
+                            )
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("MainViewModel", "Error fetching installed apps", e)
+            }
+
+            _mediaApps.value = apps
         }
     }
 

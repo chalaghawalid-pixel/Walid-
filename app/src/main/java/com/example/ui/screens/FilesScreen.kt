@@ -47,6 +47,7 @@ fun FilesScreen(viewModel: MainViewModel) {
     val photosList by viewModel.mediaPhotos.collectAsState()
     val videosList by viewModel.mediaVideos.collectAsState()
     val docsList by viewModel.mediaDocs.collectAsState()
+    val appsList by viewModel.mediaApps.collectAsState()
 
     // Real system storage picker
     val fileLauncher = rememberLauncherForActivityResult(
@@ -204,7 +205,8 @@ fun FilesScreen(viewModel: MainViewModel) {
             "PHOTO" -> photosList
             "VIDEO" -> videosList
             "DOCUMENT" -> docsList
-            else -> emptyList() // User Apps or fallback
+            "APP" -> appsList
+            else -> emptyList()
         }.filter { it.category == activeCategory } + selectedFilesState.filter { it.category == activeCategory }
 
         val uniqueFiles = displayFiles.distinctBy { it.uriString }
